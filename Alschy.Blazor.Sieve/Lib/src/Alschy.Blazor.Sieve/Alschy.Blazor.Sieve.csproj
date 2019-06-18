@@ -10,6 +10,17 @@
     <LangVersion>7.3</LangVersion>
     <RazorLangVersion>3.0</RazorLangVersion>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <Authors>Alschy</Authors>
+    <Version>1.0.0-preview1</Version>
+    <Product>Alschy.Lib</Product>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/Alschy/Alschy.Blazor.Sieve</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Alschy/Alschy.Blazor.Sieve</RepositoryUrl>
+    <PackageTags>Blazor Sieve Core Client HTML Table Bootstrap Column Filtering Sorting Query Api Pagination Dynamic Utility</PackageTags>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright ©2019 Alschy</Copyright>
+    <PackageReleaseNotes>First release. Pagination only work about parameter to &lt;BlazorGrid&gt;</PackageReleaseNotes>
+    <Description>Blazor grid utility to generate a HTML table form a grid builder by a model. Can auto generate column filtering, sortingand pagination.</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +36,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Browser" Version="3.0.0-preview6.19307.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
