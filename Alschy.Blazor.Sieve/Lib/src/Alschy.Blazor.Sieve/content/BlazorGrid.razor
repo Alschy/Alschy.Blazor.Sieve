@@ -1,0 +1,239 @@
+@using Alschy.Blazor.Sieve.Models;
+@typeparam TableItem
+@inject HttpClient http
+
+<div class="@TableFrameClass">
+    <table class="@TableClass">
+        <thead>
+            <tr>
+                @foreach (var item in ColumnDefinitions)
+                {
+                    <th @onclick=@(async () => await ToggleFilter(item))>
+                        @item.ColumnName
+                        @if (item.CanSort)
+                        {
+                            @if (sorts[item.PropertyName] == asc)
+                            {
+                                <span class="@SortAscSpanClass" @onclick=@(async () => await ToggleFilter(item))></span>
+                            }
+                            else if (sorts[item.PropertyName] == desc)
+                            {
+                                <span class="@SortDescSpanClass" @onclick=@(async () => await ToggleFilter(item))></span>
+                            }
+                        }
+                    </th>
+                }
+            </tr>
+            <tr hidden="@FilterVisiable == false">
+                @foreach (var item in ColumnDefinitions)
+                {
+                    <th>
+                        @if (item.CanFilter)
+                        {
+                            <input type="text" class="@ColumnFilterInputClass" @onchange=@(async e => await FilterChanged(e, item)) />
+                        }
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Items)
+            {
+                <tr>
+                    @foreach (var col in ColumnDefinitions)
+                    {
+                        <td>
+                            @GetValue(col, item)
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+#region Parameters
+[Parameter]
+public string QueryPath { get; set; }
+[Parameter]
+public IEnumerable<ColumnDefinition>
+    ColumnDefinitions { get; set; } = new List<ColumnDefinition>
+        ();
+        [Parameter]
+        public string TableFrameClass { get; set; } = tableResponsiveClass;
+        [Parameter]
+        public string TableClass { get; set; } = tableClass;
+        [Parameter]
+        public string ColumnFilterInputClass { get; set; } = tableColumnInputClass;
+        [Parameter]
+        public string SortAscSpanClass { get; set; } = arrowTopClass;
+        [Parameter]
+        public string SortDescSpanClass { get; set; } = arrowBottomClass;
+        [Parameter]
+        public bool FilterVisiable { get; set; } = false;
+        [Parameter]
+        public int? PageSize { get; set; } = null;
+        [Parameter]
+        public int? CurrentPage { get; set; } = null;
+        #endregion
+
+        #region Constants
+        private const string asc = "asc";
+        private const string desc = "desc";
+        private const string tableResponsiveClass = "table-responsive";
+        private const string tableClass = "table table-hover";
+        private const string tableColumnInputClass = "form-control";
+        private const string arrowTopClass = "oi oi-arrow-top";
+        private const string arrowBottomClass = "oi oi-arrow-bottom";
+        #endregion
+
+        #region Internal Fields
+        private IEnumerable<TableItem>
+            Items = new List<TableItem>
+                ();
+                private Dictionary<string, string>
+                    filter = new Dictionary<string, string>
+                        ();
+                        private Dictionary<string, string>
+                            sorts = new Dictionary<string, string>
+                                ();
+
+                                #endregion
+
+                                #region Initialization
+                                protected override async Task OnInitAsync()
+                                {
+                                foreach (var item in ColumnDefinitions)
+                                {
+                                filter.Add(item.PropertyName, null);
+                                sorts.Add(item.PropertyName, null);
+                                }
+                                await LoadAndSetData();
+                                }
+                                #endregion
+
+                                #region Handler
+
+                                private async Task ToggleFilter(ColumnDefinition column)
+                                {
+                                if (!column.CanSort)
+                                {
+                                return;
+                                }
+                                switch (sorts[column.PropertyName])
+                                {
+                                case asc:
+                                sorts[column.PropertyName] = desc;
+                                break;
+                                case desc:
+                                sorts[column.PropertyName] = null;
+                                break;
+                                default:
+                                sorts[column.PropertyName] = asc;
+                                break;
+                                }
+                                await LoadAndSetData();
+                                }
+
+                                private async Task FilterChanged(UIChangeEventArgs e, ColumnDefinition column)
+                                {
+                                if (!column.CanFilter)
+                                {
+                                return;
+                                }
+                                string filterop = "";
+                                if (string.IsNullOrEmpty(e.Value as string))
+                                {
+                                filter[column.PropertyName] = null;
+                                return;
+                                }
+                                else if (!Char.IsLetterOrDigit((e.Value as string)[0]))
+                                {
+                                if (column.IsNumericValue)
+                                {
+                                filterop = "==";
+                                }
+                                else
+                                {
+                                filterop = "@=";
+                                }
+                                }
+                                filter[column.PropertyName] = filterop + e.Value;
+                                await LoadAndSetData();
+                                }
+
+                                #endregion
+
+                                #region Load Data
+
+                                protected string BuildFilterQuery()
+                                {
+                                string filterString = "";
+                                foreach (var item in filter)
+                                {
+                                if (!string.IsNullOrEmpty(item.Value))
+                                {
+                                filterString += "," + item.Key + item.Value;
+                                }
+                                }
+                                return filterString.TrimStart(',');
+                                }
+
+                                protected string BuildSortString()
+                                {
+                                string sortString = "";
+                                foreach (var item in sorts)
+                                {
+                                if (!string.IsNullOrEmpty(item.Value))
+                                {
+                                if (item.Value == asc)
+                                {
+                                sortString += "," + item.Key;
+                                }
+                                else if(item.Value == desc)
+                                {
+                                sortString += ",-" + item.Key;
+                                }
+                                }
+                                }
+                                return sortString.TrimStart(',');
+                                }
+
+                                protected virtual string BuildQueryString()
+                                {
+                                var filterString = BuildFilterQuery();
+                                var sortString = BuildSortString();
+                                string queryString = "?";
+                                if (!string.IsNullOrEmpty(filterString))
+                                {
+                                queryString += "filter=" + filterString + "&";
+                                }
+                                if (!string.IsNullOrEmpty(sortString))
+                                {
+                                queryString += "sorts=" + sortString + "&";
+                                }
+                                if (PageSize != null && CurrentPage != null)
+                                {
+                                queryString += $"page={CurrentPage}&pageSize={PageSize}";
+                                }
+                                return queryString.TrimEnd('&');
+                                }
+
+                                private async Task LoadAndSetData()
+                                {
+                                Items = await http.GetJsonAsync<IEnumerable<TableItem>>(QueryPath + BuildQueryString());
+}
+
+#endregion
+
+#region Helper
+
+private string GetValue(ColumnDefinition column, TableItem item)
+{
+    return column.Converter.Invoke(item.GetType().GetProperty(column.PropertyName).GetValue(item).ToString());
+}
+
+#endregion
+
+}
