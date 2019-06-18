@@ -1,6 +1,6 @@
 # Alschy.Blazor.Sieve
 
-[![Build status](https://alschy.visualstudio.com/Alschy.Blazor.Sieve/_apis/build/status/Alschy.Blazor.Sieve-CI)](https://alschy.visualstudio.com/Alschy.Blazor.Sieve/_build/latest?definitionId=-1)
+![Build status](https://alschy.visualstudio.com/Alschy.Blazor.Sieve/_apis/build/status/Alschy.Blazor.Sieve-CI)
 
 ## General
 This project is a client implementation for Microsoft Blazor Apps for the [Sieve](https://github.com/Biarity/Sieve) Project.
