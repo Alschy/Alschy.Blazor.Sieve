@@ -99,9 +99,27 @@ To use the table is only a single tag requiered:
   </tr>
 </table>
 
+A basic version of the Tag is follow:  
+``` html
+<BlazorGrid TableItem="MyModel" QueryPath="https://localhost/api/myApi" ColumnDefinitions="@builder.Build() result"></BlazorGrid>
+```  
+
 ## The code
-will come soon! :)
+on code side will the grid with there columns configured. Filter and sorts they configured on client side for filter must be too configured on serverside sieve to works as excpected.
+At first must be created a new new BlazorGridBuilder like this:  
+``` csharp
+var builder = new BlazorGridBuilder<TModel>();
+```  
+Then can you configure the Columns. The order of configuring the columns is they how it display. The ForColumn Method expect a lambda where you choice your property. Its return a new object of ColumnBuilder in there you configure the options for this.
+``` csharp
+builder.ForColumn(model => model.MyFirstProperty)
+          .SetCaption("My Column Name")
+          .CanSort()
+          .CanFilter()
+          .SetConverter(input => DateTime.Parse(input).ToShortDateString())
+          ;
+```  
+In the converter method you will get as input parameter the .ToString() value of the item. In case of a DateTime type of MyFirstProperty you can parse and convert this to how you need. If the .SetConverter(Func<string,string> convert) not called it will display the .ToString() value as default in the table cell. If the caption isn't set is equals the name of the property.
 
 
-
-Feel free to contribute, using (too in comercial applications) and fork. Its MIT Licensed 
+Feel free to contribute, using (too in commercial applications) and fork. Its MIT Licensed 
