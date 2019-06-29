@@ -1,14 +1,14 @@
 # Alschy.Blazor.Sieve
 
 ![Build status](https://alschy.visualstudio.com/Alschy.Blazor.Sieve/_apis/build/status/Alschy.Blazor.Sieve-CI)  
-![Nuget](https://img.shields.io/nuget/v/Alschy.Blazor.Sieve.svg)
+[![Nuget](https://img.shields.io/nuget/v/Alschy.Blazor.Sieve.svg)](https://www.nuget.org/packages/Alschy.Blazor.Sieve)
 
 ## General
 This project is a client implementation for Microsoft Blazor Apps for the [Sieve](https://github.com/Biarity/Sieve) Project.
 Its provide a Taghelper for a Grid which can dynamically create a HTML Table who support column filtering, column sorts and pagination. Default UI is styled for Bootstrap in the version 4.3, in additon the open ionic icons used for the sort arrows. The classes can be overriden by HTML parameter to set a custom styling. Some more came if the code is added ;) 
 
 ## Installation 
-The Package is aviable on NuGet. The current version is ![Nuget](https://img.shields.io/nuget/v/Alschy.Blazor.Sieve.svg)  
+The Package is aviable on NuGet. The current version is [![Nuget](https://img.shields.io/nuget/v/Alschy.Blazor.Sieve.svg)](https://www.nuget.org/packages/Alschy.Blazor.Sieve)  
 For run in a Package-Manager consol run this command
 
 ```
